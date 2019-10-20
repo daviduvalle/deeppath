@@ -9,6 +9,8 @@ a baseline, the oracle is assumed to be a human doctor.
 
 [Paper](http://proceedings.mlr.press/v68/ling17a.html)
 
+https://github.com/ajinkyathorve/TREC-2017-PM-CDS-Track
+
 
 ## AI Assisted Annotator using Reinforcement Learning
 
@@ -17,4 +19,3 @@ Using data from sensors of monitoring health devices (i.e heart rate), they crea
 
 [Paper](https://arxiv.org/abs/1910.02052) 
 
-https://github.com/ajinkyathorve/TREC-2017-PM-CDS-Track
