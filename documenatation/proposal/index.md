@@ -17,3 +17,4 @@ Using data from sensors of monitoring health devices (i.e heart rate), they crea
 
 [Paper](https://arxiv.org/abs/1910.02052) 
 
+https://github.com/ajinkyathorve/TREC-2017-PM-CDS-Track
