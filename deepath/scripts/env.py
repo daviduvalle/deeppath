@@ -77,7 +77,7 @@ class Env(object):
 			new_state = [new_pos, target_pos, self.die]
 
 			if new_pos == target_pos:
-				print 'Find a path:', self.path
+				print ('Find a path:', self.path)
 				done = 1
 				reward = 0
 				new_state = None

@@ -1,4 +1,4 @@
-from Queue import Queue
+from queue import Queue
 import random
 
 def BFS(kb, entity1, entity2):

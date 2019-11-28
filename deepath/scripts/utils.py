@@ -48,7 +48,7 @@ def teacher(e1, e2, num_paths, env, path = None):
 		if suc1 and suc2:
 			res_entity_lists.append(entity_list1 + entity_list2[1:])
 			res_path_lists.append(path_list1 + path_list2)
-	print 'BFS found paths:', len(res_path_lists)
+	print ( 'BFS found paths:', len(res_path_lists))
 	
 	# ---------- clean the path --------
 	res_entity_lists_new = []
@@ -84,8 +84,8 @@ def teacher(e1, e2, num_paths, env, path = None):
 		res_entity_lists_new.append(entities_new)
 		res_path_lists_new.append(relations_new)
 	
-	print res_entity_lists_new
-	print res_path_lists_new
+	print (res_entity_lists_new)
+	print (res_path_lists_new)
 
 	good_episodes = []
 	targetID = env.entity2id_[e2]
@@ -127,7 +127,7 @@ def prob_norm(probs):
 	return probs/sum(probs)
 
 if __name__ == '__main__':
-	print prob_norm(np.array([1,1,1]))
+	print (prob_norm(np.array([1,1,1])))
 	#path_clean('/common/topic/webpage./common/webpage/category -> /m/08mbj5d -> /common/topic/webpage./common/webpage/category_inv -> /m/01d34b -> /common/topic/webpage./common/webpage/category -> /m/08mbj5d -> /common/topic/webpage./common/webpage/category_inv -> /m/0lfyx -> /common/topic/webpage./common/webpage/category -> /m/08mbj5d -> /common/topic/webpage./common/webpage/category_inv -> /m/01y67v -> /common/topic/webpage./common/webpage/category -> /m/08mbj5d -> /common/topic/webpage./common/webpage/category_inv -> /m/028qyn -> /people/person/nationality -> /m/09c7w0')
 
 
