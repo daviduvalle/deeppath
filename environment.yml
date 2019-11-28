@@ -1,4 +1,4 @@
-name: cs221
+name:dptf 
 channels:
   - pytorch
   - conda-forge
@@ -10,7 +10,7 @@ dependencies:
   - pip
   - spacy=2.0.16
   - tensorboard
-  - tensorflow
+  - tensorflow=1.13.1
   - tensorboardX
   - tqdm
   - urllib3
