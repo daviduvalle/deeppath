@@ -1,7 +1,7 @@
 #!/bin/bash
 
 relation=$1
-python sl_policy.py $relation
-python policy_agent.py $relation retrain
-python policy_agent.py $relation test
+python3 sl_policy.py $relation
+python3 policy_agent.py $relation retrain
+python3 policy_agent.py $relation test
 
