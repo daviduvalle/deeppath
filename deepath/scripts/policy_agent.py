@@ -53,13 +53,15 @@ def REINFORCE(training_pairs, policy_nn, num_episodes):
 	# path_found = set()
 	path_found_entity = []
 	path_relation_found = []
+	env = Env(dataPath)
 
 	for i_episode in range(num_episodes):
 		start = time.time()
 		print('Episode {}'.format(i_episode))
 		print('Training sample: {}'.format(train[i_episode][:-1]))
 
-		env = Env(dataPath, train[i_episode])
+		#env = Env(dataPath, train[i_episode])
+		env.append_task_relations(train[i_episode])
 
 		sample = train[i_episode].split()
 		state_idx = [env.entity2id_[sample[0]], env.entity2id_[sample[1]], 0]
@@ -221,9 +223,11 @@ def test():
 		if test_num > 500:
 			test_num = 500
 
+		env = Env(dataPath)
 		for episode in range(test_num):
 			print('Test sample {} {}'.format(episode,test_data[episode][:-1]))
-			env = Env(dataPath, test_data[episode])
+			#env = Env(dataPath, test_data[episode])
+			env.append_task_relations(test_data[episode])
 			sample = test_data[episode].split()
 			state_idx = [env.entity2id_[sample[0]], env.entity2id_[sample[1]], 0]
 
