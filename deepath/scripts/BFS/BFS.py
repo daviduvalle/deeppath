@@ -25,7 +25,7 @@ def test():
 class foundPaths(object):
 	def __init__(self, kb):
 		self.entities = {}
-		for entity, relations in kb.entities.iteritems():
+		for entity, relations in kb.entities.items():
 			self.entities[entity] = (False, "", "")
 
 	def isFound(self, entity):

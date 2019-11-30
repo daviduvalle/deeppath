@@ -78,7 +78,7 @@ def train():
             try:
                 good_episodes = teacher(sample[0], sample[1], 5, env, graphpath)
             except Exception as e:
-                print('Cannot find a path')
+                print('Cannot find a path, exception {}'.format(e))
                 continue
 
             for item in good_episodes:
@@ -114,7 +114,7 @@ def test(test_episodes):
     with tf.Session() as sess:
         saver.restore(sess, 'models/policy_supervised_' + relation)
         print('Model reloaded')
-        for episode in xrange(len(test_data)):
+        for episode in range(len(test_data)):
             print('Test sample %d: %s' % (episode, test_data[episode][:-1]))
             env = Env(dataPath, test_data[episode])
             sample = test_data[episode].split()
