@@ -6,6 +6,7 @@ from itertools import count
 from sklearn.metrics.pairwise import cosine_similarity
 import time
 import sys
+import pickle
 
 from networks import policy_nn, value_nn
 from utils import *
@@ -45,7 +46,7 @@ class PolicyNetwork(object):
 		return loss
 
 
-def REINFORCE(training_pairs, policy_nn, num_episodes):
+def REINFORCE(training_pairs, policy_nn, num_episodes, bfs_cache):
 	train = training_pairs
 
 	success = 0
@@ -55,6 +56,7 @@ def REINFORCE(training_pairs, policy_nn, num_episodes):
 	path_relation_found = []
 	env = Env(dataPath)
 	oracle = Oracle(graphpath)
+	hits = misses = 0
 
 	for i_episode in range(num_episodes):
 		start = time.time()
@@ -145,7 +147,16 @@ def REINFORCE(training_pairs, policy_nn, num_episodes):
 			print('Failed, Do one teacher guideline')
 			try:
 				# good_episodes = teacher(sample[0], sample[1], 1, env, graphpath)
-				good_episodes = oracle.teacher(sample[0], sample[1], 1, env)
+				key = sample[0] + ':' + sample[1]
+				if key in bfs_cache:
+					print("CACHE HIT")
+					hits += 1
+					good_episodes = bfs_cache[key];
+				else:
+					print("CACHE MISS")
+					misses += 1
+					good_episodes = oracle.teacher(sample[0], sample[1], 1, env)
+
 				for item in good_episodes:
 					teacher_state_batch = []
 					teacher_action_batch = []
@@ -158,6 +169,7 @@ def REINFORCE(training_pairs, policy_nn, num_episodes):
 			except Exception as e:
 				print('Teacher guideline failed')
 		print('Episode time: {}'.format(time.time() - start))
+		print('Cache hits {}, misses {}'.format(hits, misses))
 		print('\n')
 	print('Success percentage: {}'.format(success/num_episodes))
 
@@ -188,6 +200,7 @@ def retrain():
 	f = open(relationPath)
 	training_pairs = f.readlines()
 	f.close()
+	bfs_cache = pickle.load(open('bfs.p', 'rb'))
 
 	saver = tf.train.Saver()
 	with tf.Session() as sess:
@@ -196,7 +209,7 @@ def retrain():
 		episodes = len(training_pairs)
 		if episodes > 300:
 			episodes = 300
-		REINFORCE(training_pairs, policy_network, episodes)
+		REINFORCE(training_pairs, policy_network, episodes, bfs_cache)
 		saver.save(sess, 'models/policy_retrained' + relation)
 	print('Retrained model saved')
 
