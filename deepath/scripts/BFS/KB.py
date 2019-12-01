@@ -9,7 +9,7 @@ class KB(object):
 			self.entities[entity1] = [Path(relation, entity2)]
 
 	def getPathsFrom(self, entity):
-		return self.entities[entity]
+		return self.entities.get(entity, list())
 
 	def removePath(self, entity1, entity2):
 		for idx, path in enumerate(self.entities[entity1]):
