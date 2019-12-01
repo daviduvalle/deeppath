@@ -63,7 +63,7 @@ def train():
     with tf.Session() as sess:
         sess.run(tf.global_variables_initializer())
         if num_samples > 500:
-            num_samples = 10
+            num_samples = 500
         else:
             num_episodes = num_samples
 
@@ -87,7 +87,7 @@ def train():
 
         for episode in range(num_samples):
             good_episodes = episode_good_episodes.get(episode)
-            print('episodes_good_episodes {}'.format(sys.getsizeof(episode_good_episodes)))
+            # print('episodes_good_episodes {}'.format(sys.getsizeof(episode_good_episodes)))
             print('GPU Episode: {}'.format(episode))
             for item in good_episodes:
                 state_batch = []
