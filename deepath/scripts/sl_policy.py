@@ -67,7 +67,7 @@ def train():
         else:
             num_episodes = num_samples
 
-        utilities = Utilities(graphpath)
+        oracle = Oracle(graphpath)
         episode_good_episodes = {}
 
         for episode in range(num_samples):
@@ -79,7 +79,7 @@ def train():
             sample = train_data[episode % num_samples].split()
 
             try:
-                good_episodes = utilities.teacher(sample[0], sample[1], 5, env)
+                good_episodes = oracle.teacher(sample[0], sample[1], 5, env)
                 episode_good_episodes[episode] = good_episodes
             except Exception as e:
                 print('Cannot find a path, exception {}'.format(e))

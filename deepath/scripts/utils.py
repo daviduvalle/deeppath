@@ -25,7 +25,7 @@ dataPath = '../NELL-995/'
 Transition = namedtuple('Transition', ('state', 'action', 'next_state', 'reward'))
 
 
-class Utilities(object):
+class Oracle(object):
 	def __init__(self, path):
 		f = open(path)
 		self.content = f.readlines()
