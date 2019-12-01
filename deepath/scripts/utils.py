@@ -2,6 +2,7 @@ from __future__ import division
 import random
 from collections import namedtuple, Counter
 import numpy as np
+import pickle
 
 from BFS.KB import KB
 from BFS.BFS import BFS
@@ -30,6 +31,12 @@ class Oracle(object):
 		f = open(path)
 		self.content = f.readlines()
 		f.close()
+		self.good_episodes_persistence = {}
+
+	def persist_BFS(self):
+		print("Persisting BFS")
+		pickle.dump(self.good_episodes_persistence, open('bfs.p', 'wb'))
+
 
 	def teacher(self, e1, e2, num_paths, env):
 		kb = KB()
@@ -97,6 +104,13 @@ class Oracle(object):
 				actionID = env.relation2id_[path[1][i]]
 				good_episode.append(Transition(state=env.idx_state(state_curr), action=actionID, next_state=env.idx_state(state_next),reward=1))
 			good_episodes.append(good_episode)
+
+		## Persist the first 1 episode and use source(e1)/target(e2) entities as key
+		if len(good_episodes) > 0:
+			self.good_episodes_persistence[e1+':'+e2] = good_episodes[0]
+		else:
+			self.good_episodes_persistence[e1+':'+e2] = None
+
 		return good_episodes
 
 
