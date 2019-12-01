@@ -54,6 +54,7 @@ def REINFORCE(training_pairs, policy_nn, num_episodes):
 	path_found_entity = []
 	path_relation_found = []
 	env = Env(dataPath)
+	oracle = Oracle(graphpath)
 
 	for i_episode in range(num_episodes):
 		start = time.time()
@@ -143,7 +144,8 @@ def REINFORCE(training_pairs, policy_nn, num_episodes):
 
 			print('Failed, Do one teacher guideline')
 			try:
-				good_episodes = teacher(sample[0], sample[1], 1, env, graphpath)
+				# good_episodes = teacher(sample[0], sample[1], 1, env, graphpath)
+				good_episodes = oracle.teacher(sample[0], sample[1], 1, env)
 				for item in good_episodes:
 					teacher_state_batch = []
 					teacher_action_batch = []
