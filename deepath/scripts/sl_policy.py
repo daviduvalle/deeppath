@@ -68,6 +68,7 @@ def train():
             num_episodes = num_samples
 
         utilities = Utilities(graphpath)
+        episode_good_episodes = {}
 
         for episode in range(num_samples):
             print("Episode %d" % episode)
@@ -79,10 +80,14 @@ def train():
 
             try:
                 good_episodes = utilities.teacher(sample[0], sample[1], 5, env)
+                episode_good_episodes[episode] = good_episodes
             except Exception as e:
                 print('Cannot find a path, exception {}'.format(e))
                 continue
 
+        for episode in range(num_samples):
+            good_episodes = episode_good_episodes.get(episode)
+            print('GPU Episode: {}'.format(episode))
             for item in good_episodes:
                 state_batch = []
                 action_batch = []
@@ -92,9 +97,8 @@ def train():
                 state_batch = np.squeeze(state_batch)
                 state_batch = np.reshape(state_batch, [-1, state_dim])
                 policy_nn.update(state_batch, action_batch)
-
-        saver.save(sess, 'models/policy_supervised_' + relation)
-        print('Model saved')
+                saver.save(sess, 'models/policy_supervised_' + relation)
+                print('Model saved')
 
 
 def test(test_episodes):
