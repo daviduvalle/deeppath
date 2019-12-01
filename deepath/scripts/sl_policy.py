@@ -63,7 +63,7 @@ def train():
     with tf.Session() as sess:
         sess.run(tf.global_variables_initializer())
         if num_samples > 500:
-            num_samples = 500
+            num_samples = 10
         else:
             num_episodes = num_samples
 
@@ -87,6 +87,7 @@ def train():
 
         for episode in range(num_samples):
             good_episodes = episode_good_episodes.get(episode)
+            print('episodes_good_episodes {}'.format(sys.getsizeof(episode_good_episodes)))
             print('GPU Episode: {}'.format(episode))
             for item in good_episodes:
                 state_batch = []
@@ -97,8 +98,8 @@ def train():
                 state_batch = np.squeeze(state_batch)
                 state_batch = np.reshape(state_batch, [-1, state_dim])
                 policy_nn.update(state_batch, action_batch)
-                saver.save(sess, 'models/policy_supervised_' + relation)
-                print('Model saved')
+        saver.save(sess, 'models/policy_supervised_' + relation)
+        print('Model saved')
 
 
 def test(test_episodes):
