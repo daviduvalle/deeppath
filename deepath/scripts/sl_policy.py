@@ -67,6 +67,8 @@ def train():
         else:
             num_episodes = num_samples
 
+        utilities = Utilities(graphpath)
+
         for episode in range(num_samples):
             print("Episode %d" % episode)
             print('Training Sample:', train_data[episode % num_samples][:-1])
@@ -76,7 +78,7 @@ def train():
             sample = train_data[episode % num_samples].split()
 
             try:
-                good_episodes = teacher(sample[0], sample[1], 5, env, graphpath)
+                good_episodes = utilities.teacher(sample[0], sample[1], 5, env)
             except Exception as e:
                 print('Cannot find a path, exception {}'.format(e))
                 continue
