@@ -73,7 +73,7 @@ def get_features():
 		path = line.split('\t')[0]
 		num = int(line.split('\t')[1])
 		stats[path] = num
-	max_freq = np.max(stats.values())
+	max_freq = np.max(list(stats.values()))
 
 	relation2id = {}
 	f = open(relationId_path)
@@ -93,7 +93,7 @@ def get_features():
 
 		if path not in stats:
 			continue
-		elif (len(max_freq) > 1) and (stats[path] < 2):
+		elif max_freq > 1 and stats[path] < 2:
 			continue
 
 		length = len(path.split(' -> '))
