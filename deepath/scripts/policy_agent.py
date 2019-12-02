@@ -155,8 +155,8 @@ def REINFORCE(training_pairs, policy_nn, num_episodes, bfs_cache):
 				else:
 					print("CACHE MISS")
 					misses += 1
-					good_episodes = oracle.teacher(sample[0], sample[1], 1, env)
 
+				good_episodes = oracle.teacher(sample[0], sample[1], 1, env)
 				for item in good_episodes:
 					teacher_state_batch = []
 					teacher_action_batch = []

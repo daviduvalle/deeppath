@@ -99,6 +99,7 @@ def train():
                 state_batch = np.reshape(state_batch, [-1, state_dim])
                 policy_nn.update(state_batch, action_batch)
         saver.save(sess, 'models/policy_supervised_' + relation)
+        oracle.persist_BFS()
         print('Model saved')
 
 
