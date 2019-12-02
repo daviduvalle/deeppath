@@ -151,12 +151,15 @@ def REINFORCE(training_pairs, policy_nn, num_episodes, bfs_cache):
 				if key in bfs_cache:
 					print("CACHE HIT")
 					hits += 1
-					good_episodes = bfs_cache[key][0];
+					if bfs_cache[key] is not None:
+						good_episodes = bfs_cache[key][0]
+					else:
+						good_episodes = list()
 				else:
 					print("CACHE MISS")
 					misses += 1
+					good_episodes = oracle.teacher(sample[0], sample[1], 1, env)
 
-				good_episodes = oracle.teacher(sample[0], sample[1], 1, env)
 				for item in good_episodes:
 					teacher_state_batch = []
 					teacher_action_batch = []
@@ -200,7 +203,7 @@ def retrain():
 	f = open(relationPath)
 	training_pairs = f.readlines()
 	f.close()
-	bfs_cache = pickle.load(open('bfs.p', 'rb'))
+	bfs_cache = pickle.load(open(dataPath + 'tasks/' + relation + '/' + 'bfs.p', 'rb'))
 
 	saver = tf.train.Saver()
 	with tf.Session() as sess:

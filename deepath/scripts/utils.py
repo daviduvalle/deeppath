@@ -33,10 +33,9 @@ class Oracle(object):
 		f.close()
 		self.good_episodes_persistence = {} # e1+':'+e2 -> List<>[good_episodes]
 
-	def persist_BFS(self):
-		print("Persisting BFS")
-		pickle.dump(self.good_episodes_persistence, open('bfs.p', 'wb'))
-
+	def persist_BFS(self, path):
+		output = path + "bfs.p"
+		pickle.dump(self.good_episodes_persistence, open(output, 'wb'))
 
 	def teacher(self, e1, e2, num_paths, env):
 		kb = KB()
