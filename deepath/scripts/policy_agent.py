@@ -151,7 +151,7 @@ def REINFORCE(training_pairs, policy_nn, num_episodes, bfs_cache):
 				if key in bfs_cache:
 					print("CACHE HIT")
 					hits += 1
-					good_episodes = bfs_cache[key];
+					good_episodes = bfs_cache[key][0];
 				else:
 					print("CACHE MISS")
 					misses += 1

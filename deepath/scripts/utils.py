@@ -31,7 +31,7 @@ class Oracle(object):
 		f = open(path)
 		self.content = f.readlines()
 		f.close()
-		self.good_episodes_persistence = {}
+		self.good_episodes_persistence = {} # e1+':'+e2 -> List<>[good_episodes]
 
 	def persist_BFS(self):
 		print("Persisting BFS")
@@ -107,7 +107,7 @@ class Oracle(object):
 
 		## Persist the first 1 episode and use source(e1)/target(e2) entities as key
 		if len(good_episodes) > 0:
-			self.good_episodes_persistence[e1+':'+e2] = good_episodes[0]
+			self.good_episodes_persistence[e1+':'+e2] = good_episodes
 		else:
 			self.good_episodes_persistence[e1+':'+e2] = None
 
