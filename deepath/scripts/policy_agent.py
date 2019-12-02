@@ -146,13 +146,14 @@ def REINFORCE(training_pairs, policy_nn, num_episodes, bfs_cache):
 
 			print('Failed, Do one teacher guideline')
 			try:
-				# good_episodes = teacher(sample[0], sample[1], 1, env, graphpath)
+				#old_good_episodes = teacher(sample[0], sample[1], 1, env, graphpath)
 				key = sample[0] + ':' + sample[1]
 				if key in bfs_cache:
 					print("CACHE HIT")
 					hits += 1
 					if bfs_cache[key] is not None:
-						good_episodes = bfs_cache[key][0]
+						good_episodes = list()
+						good_episodes.append(bfs_cache[key][0])
 					else:
 						good_episodes = list()
 				else:
@@ -170,7 +171,7 @@ def REINFORCE(training_pairs, policy_nn, num_episodes, bfs_cache):
 					policy_nn.update(np.squeeze(teacher_state_batch), 1, teacher_action_batch)
 
 			except Exception as e:
-				print('Teacher guideline failed')
+				print('Teacher guideline failed, exception {}'.format(e))
 		print('Episode time: {}'.format(time.time() - start))
 		print('Cache hits {}, misses {}'.format(hits, misses))
 		print('\n')
