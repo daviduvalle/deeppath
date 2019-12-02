@@ -39,9 +39,9 @@ def bfs_two(e1,e2,path,kb,kb_inv):
 						if path_.relation == left_step:
 							left_next.add(path_.connected_entity)
 				except Exception as e:
-					print 'left', len(left)
-					print left
-					print 'not such entity'
+					print ('left', len(left))
+					print (left)
+					print ('not such entity')
 					return False
 			left = left_next
 
@@ -54,8 +54,8 @@ def bfs_two(e1,e2,path,kb,kb_inv):
 						if path_.relation == right_step:
 							right_next.add(path_.connected_entity)
 				except Exception as e:
-					print 'right', len(right)
-					print 'no such entity'
+					print ('right', len(right))
+					print ('no such entity')
 					return False
 			right = right_next
 
@@ -93,7 +93,7 @@ def get_features():
 
 		if path not in stats:
 			continue
-		elif max_freq > 1 and stats[path] < 2:
+		elif (len(max_freq) > 1) and (stats[path] < 2):
 			continue
 
 		length = len(path.split(' -> '))
@@ -110,7 +110,7 @@ def get_features():
 			useful_paths.append(pathIndex)
 			named_paths.append(pathName)
 
-	print 'How many paths used: ', len(useful_paths)
+	print ('How many paths used: ', len(useful_paths))
 	return useful_paths, named_paths
 
 f1 = open(ent_id_path)
@@ -182,9 +182,9 @@ scores_E = []
 scores_R = []
 scores_rl = []
 
-print 'How many queries: ', len(test_pairs)
+print ('How many queries: ', len(test_pairs))
 for idx, sample in enumerate(test_pairs):
-	print 'Query No.%d of %d' % (idx, len(test_pairs))
+	print ('Query No.%d of %d' % (idx, len(test_pairs)))
 	e1_vec_E = ent_vec_E[entity2id[sample[0]],:]
 	e2_vec_E = ent_vec_E[entity2id[sample[1]],:]
 	score_E = -np.sum(np.square(e1_vec_E + relation_vec_E - e2_vec_E))
@@ -204,12 +204,13 @@ for idx, sample in enumerate(test_pairs):
 	score_rl = sum(features)
 	scores_rl.append(score_rl)
 
-rank_stats_E = zip(scores_E, test_labels)
-rank_stats_R = zip(scores_R, test_labels)
-rank_stats_rl = zip(scores_rl, test_labels)
-rank_stats_E.sort(key = lambda x:x[0], reverse=True)
-rank_stats_R.sort(key = lambda x:x[0], reverse=True)
-rank_stats_rl.sort(key = lambda x:x[0], reverse=True)
+rank_stats_E = sorted(zip(scores_E, test_labels),key = lambda x:x[0], reverse=True)
+rank_stats_R = sorted(zip(scores_R, test_labels),key = lambda x:x[0], reverse=True)
+rank_stats_rl = sorted(zip(scores_rl, test_labels),key = lambda x:x[0], reverse=True)
+
+#rank_stats_E.sort(key = lambda x:x[0], reverse=True)
+#rank_stats_R.sort(key = lambda x:x[0], reverse=True)
+#rank_stats_rl.sort(key = lambda x:x[0], reverse=True)
 
 correct = 0
 ranks = []
@@ -218,7 +219,7 @@ for idx, item in enumerate(rank_stats_E):
 		correct += 1
 		ranks.append(correct/(1.0+idx))
 ap1 = np.mean(ranks)
-print 'TransE: ', ap1
+print ('TransE: ', ap1)
 
 correct = 0
 ranks = []
@@ -227,7 +228,7 @@ for idx, item in enumerate(rank_stats_R):
 		correct += 1
 		ranks.append(correct/(1.0+idx))
 ap2 = np.mean(ranks)
-print 'TransR: ', ap2
+print ('TransR: ', ap2)
 
 
 correct = 0
@@ -237,7 +238,7 @@ for idx, item in enumerate(rank_stats_rl):
 		correct += 1
 		ranks.append(correct/(1.0+idx))
 ap3 = np.mean(ranks)
-print 'RL: ', ap3
+print ('RL: ', ap3)
 
 f1 = open(ent_id_path)
 f2 = open(rel_id_path)
@@ -300,7 +301,7 @@ for idx, item in enumerate(stats):
 		correct += 1
 		ranks.append(correct/(1.0+idx))
 ap4 = np.mean(ranks)
-print 'TransH: ', ap4
+print ('TransH: ', ap4)
 
 ent_vec_D = np.loadtxt(dataPath_ + '/entity2vec.vec_D')
 rel_vec_D = np.loadtxt(dataPath_ + '/relation2vec.vec_D')
@@ -335,5 +336,5 @@ for idx, item in enumerate(stats):
 		correct += 1
 		ranks.append(correct/(1.0+idx))
 ap5 = np.mean(ranks)
-print 'TransD: ', ap5
+print ('TransD: ', ap5)
 
