@@ -46,6 +46,27 @@ class PolicyNetwork(object):
 		return loss
 
 
+def apply_vector_operations(discourage, reward, corrections, policy_nn):
+	# run an update to discourage invalid steps
+	if bool(discourage):
+		state_batch_negative = discourage['state_batch_negative']
+		action_batch_negative = discourage['action_batch_negative']
+		policy_nn.update(np.reshape(state_batch_negative, (-1, state_dim)), -0.05, action_batch_negative)
+
+	# apply positive or negative rewards
+	state_batch = reward['state_batch']
+	total_reward = reward['total_reward']
+	action_batch = reward['action_batch']
+	policy_nn.update(np.reshape(state_batch,(-1,state_dim)), total_reward, action_batch)
+
+	# apply teacher corrections, partha@ seems like we should be able to batch this?
+	if bool(corrections):
+		for k, v in corrections.items():
+			teacher_state_batch = v['teacher_state_batch']
+			teacher_action_batch = v['teacher_action_batch']
+			policy_nn.update(np.squeeze(teacher_state_batch), 1, teacher_action_batch)
+
+
 def REINFORCE(training_pairs, policy_nn, num_episodes, bfs_cache):
 	train = training_pairs
 
@@ -59,6 +80,10 @@ def REINFORCE(training_pairs, policy_nn, num_episodes, bfs_cache):
 	hits = misses = 0
 
 	for i_episode in range(num_episodes):
+		# Data holders to reduce context switches
+		discourage_invalid_data = {}
+		reward_data = {}
+
 		start = time.time()
 		print('Episode {}'.format(i_episode))
 		print('Training sample: {}'.format(train[i_episode][:-1]))
@@ -93,7 +118,9 @@ def REINFORCE(training_pairs, policy_nn, num_episodes, bfs_cache):
 		# Discourage the agent when it choose an invalid step
 		if len(state_batch_negative) != 0:
 			print('Penalty to invalid steps: {}'.format(len(state_batch_negative)))
-			policy_nn.update(np.reshape(state_batch_negative, (-1, state_dim)), -0.05, action_batch_negative)
+			discourage_invalid_data['state_batch_negative'] = state_batch_negative
+			discourage_invalid_data['action_batch_negative'] = action_batch_negative
+			#policy_nn.update(np.reshape(state_batch_negative, (-1, state_dim)), -0.05, action_batch_negative)
 
 		print('----- FINAL PATH -----')
 		print('\t'.join(env.path))
@@ -130,7 +157,10 @@ def REINFORCE(training_pairs, policy_nn, num_episodes, bfs_cache):
 				if transition.reward == 0:
 					state_batch.append(transition.state)
 					action_batch.append(transition.action)
-			policy_nn.update(np.reshape(state_batch,(-1,state_dim)), total_reward, action_batch)
+			reward_data['state_batch'] = state_batch
+			reward_data['total_reward'] = total_reward
+			reward_data['action_batch'] = action_batch
+			#policy_nn.update(np.reshape(state_batch,(-1,state_dim)), total_reward, action_batch)
 		else:
 			global_reward = -0.05
 			# length_reward = 1/len(env.path)
@@ -142,7 +172,10 @@ def REINFORCE(training_pairs, policy_nn, num_episodes, bfs_cache):
 				if transition.reward == 0:
 					state_batch.append(transition.state)
 					action_batch.append(transition.action)
-			policy_nn.update(np.reshape(state_batch, (-1,state_dim)), total_reward, action_batch)
+			#policy_nn.update(np.reshape(state_batch, (-1,state_dim)), total_reward, action_batch)
+			reward_data['state_batch'] = state_batch
+			reward_data['total_reward'] = total_reward
+			reward_data['action_batch'] = action_batch
 
 			print('Failed, Do one teacher guideline')
 			try:
@@ -161,6 +194,10 @@ def REINFORCE(training_pairs, policy_nn, num_episodes, bfs_cache):
 					misses += 1
 					good_episodes = oracle.teacher(sample[0], sample[1], 1, env)
 
+				correction_updates = {}
+				correction_data = {}
+				i = 0
+
 				for item in good_episodes:
 					teacher_state_batch = []
 					teacher_action_batch = []
@@ -168,10 +205,17 @@ def REINFORCE(training_pairs, policy_nn, num_episodes, bfs_cache):
 					for t, transition in enumerate(item):
 						teacher_state_batch.append(transition.state)
 						teacher_action_batch.append(transition.action)
-					policy_nn.update(np.squeeze(teacher_state_batch), 1, teacher_action_batch)
+					correction_data['teacher_state_batch'] = teacher_state_batch
+					correction_data['teacher_action_batch'] = teacher_action_batch
+					correction_updates[str(i)] = correction_data
+					i += 1
+					# policy_nn.update(np.squeeze(teacher_state_batch), 1, teacher_action_batch)
 
 			except Exception as e:
 				print('Teacher guideline failed, exception {}'.format(e))
+
+			apply_vector_operations(discourage_invalid_data, reward_data, correction_updates, policy_nn)
+
 		print('Episode time: {}'.format(time.time() - start))
 		print('Cache hits {}, misses {}'.format(hits, misses))
 		print('\n')
