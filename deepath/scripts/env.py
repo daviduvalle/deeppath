@@ -43,6 +43,9 @@ class Env(object):
                 if rel != relation and rel != relation + '_inv':
                     self.kb.append(line)
 
+    def clean_up(self):
+        self.kb = []
+
     def interact(self, state, action):
         '''
         This function process the interact from the agent

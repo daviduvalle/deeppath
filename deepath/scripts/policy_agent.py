@@ -215,6 +215,7 @@ def REINFORCE(training_pairs, policy_nn, num_episodes, bfs_cache):
 				print('Teacher guideline failed, exception {}'.format(e))
 
 			apply_vector_operations(discourage_invalid_data, reward_data, correction_updates, policy_nn)
+			env.clean_up()
 
 		print('Episode time: {}'.format(time.time() - start))
 		print('Cache hits {}, misses {}'.format(hits, misses))
