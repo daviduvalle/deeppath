@@ -44,7 +44,10 @@ class Env(object):
                     self.kb.append(line)
 
     def clean_up(self):
+        self.path = []
+        self.path_relations = []
         self.kb = []
+        self.die = 0
 
     def interact(self, state, action):
         '''

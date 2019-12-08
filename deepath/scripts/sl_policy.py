@@ -81,8 +81,10 @@ def train():
             try:
                 good_episodes = oracle.teacher(sample[0], sample[1], 5, env)
                 episode_good_episodes[episode] = good_episodes
+                env.clean_up()
             except Exception as e:
                 print('Cannot find a path, exception {}'.format(e))
+                env.clean_up()
                 continue
 
         for episode in range(num_samples):
@@ -116,6 +118,8 @@ def test(test_episodes):
     test_data = test_data[-test_episodes:]
     print(len(test_data))
 
+    env = Env(dataPath)
+
     success = 0
 
     saver = tf.train.Saver()
@@ -124,7 +128,8 @@ def test(test_episodes):
         print('Model reloaded')
         for episode in range(len(test_data)):
             print('Test sample %d: %s' % (episode, test_data[episode][:-1]))
-            env = Env(dataPath, test_data[episode])
+            # env = Env(dataPath, test_data[episode])
+            env.append_task_relations(test_data[episode])
             sample = test_data[episode].split()
             state_idx = [env.entity2id_[sample[0]], env.entity2id_[sample[1]], 0]
             for t in count():
@@ -139,10 +144,12 @@ def test(test_episodes):
                     print('Episode ends\n')
                     break
                 state_idx = new_state
+            env.clean_up()
 
-    print('Success persentage:', success / test_episodes)
+    print('Success percentage:', success / test_episodes)
 
 
 if __name__ == "__main__":
     train()
+    #test(50)
 # test(50)

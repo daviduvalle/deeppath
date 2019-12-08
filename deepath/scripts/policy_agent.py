@@ -336,6 +336,7 @@ def test():
 							action_batch.append(transition.action)
 					policy_network.update(np.reshape(state_batch,(-1,state_dim)), 0.1*diverse_reward, action_batch)
 				path_set.add(' -> '.join(env.path_relations))
+			env.clean_up()
 
 
 	for path in path_found:
