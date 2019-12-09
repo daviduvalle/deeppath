@@ -6,13 +6,15 @@ from BFS.KB import *
 
 relation = sys.argv[1]
 
-dataPath_ = '../NELL-995/tasks/'  + relation
+data_root = '../NELL-995/'
+tasks_path = data_root + 'tasks/'
+dataPath_ = tasks_path  + relation
 featurePath = dataPath_ + '/path_to_use.txt'
 feature_stats = dataPath_ + '/path_stats.txt'
-relationId_path ='../NELL-995/' + 'relation2id.txt'
-ent_id_path = '../NELL-995/' + 'entity2id.txt'
-rel_id_path = '../NELL-995/' + 'relation2id.txt'
-test_data_path = '../NELL-995/tasks/'  + relation + '/sort_test.pairs'
+relationId_path =data_root + 'relation2id.txt'
+ent_id_path = data_root + 'entity2id.txt'
+rel_id_path = data_root + 'relation2id.txt'
+test_data_path = tasks_path  + relation + '/sort_test.pairs'
 
 def bfs_two(e1,e2,path,kb,kb_inv):
 	start = 0
