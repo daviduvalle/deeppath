@@ -179,7 +179,8 @@ def REINFORCE(training_pairs, policy_nn, num_episodes, bfs_cache):
 
 			print('Failed, Do one teacher guideline')
 			try:
-				#old_good_episodes = teacher(sample[0], sample[1], 1, env, graphpath)
+				good_episodes = oracle.teacher(sample[0], sample[1], 1, env)
+				'''
 				key = sample[0] + ':' + sample[1]
 				if key in bfs_cache:
 					print("CACHE HIT")
@@ -193,6 +194,7 @@ def REINFORCE(training_pairs, policy_nn, num_episodes, bfs_cache):
 					print("CACHE MISS")
 					misses += 1
 					good_episodes = oracle.teacher(sample[0], sample[1], 1, env)
+				'''
 
 				correction_updates = {}
 				correction_data = {}
