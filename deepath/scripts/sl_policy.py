@@ -42,7 +42,6 @@ class SupervisedPolicy(object):
     def update(self, state, action, sess=None):
         sess = sess or tf.get_default_session()
         _, loss = sess.run([self.train_op, self.loss], {self.state: state, self.action: action})
-        print('LOSS {}'.format(loss));
         return loss
 
 
@@ -67,15 +66,11 @@ def train():
             num_samples = 500
         else:
             num_episodes = num_samples
-        # Increase number of rounds to increase the number
-        # of successful paths found at test time, default 1
-        rounds = 1
-        total_episodes = num_samples * rounds
 
         oracle = Oracle(graphpath)
         episode_good_episodes = {}
 
-        for episode in range(total_episodes):
+        for episode in range(num_samples):
             print("Episode %d" % episode)
             print('Training Sample:', train_data[episode % num_samples][:-1])
 
@@ -85,13 +80,17 @@ def train():
 
             try:
                 good_episodes = oracle.teacher(sample[0], sample[1], 5, env)
-                #episode_good_episodes[episode] = good_episodes
+                episode_good_episodes[episode] = good_episodes
                 env.clean_up()
             except Exception as e:
                 print('Cannot find a path, exception {}'.format(e))
                 env.clean_up()
                 continue
 
+        for episode in range(num_samples):
+            good_episodes = episode_good_episodes.get(episode)
+            # print('episodes_good_episodes {}'.format(sys.getsizeof(episode_good_episodes)))
+            print('GPU Episode: {}'.format(episode))
             for item in good_episodes:
                 state_batch = []
                 action_batch = []
