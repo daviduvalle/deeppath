@@ -120,7 +120,7 @@ def REINFORCE(training_pairs, policy_nn, num_episodes, bfs_cache):
 			print('Penalty to invalid steps: {}'.format(len(state_batch_negative)))
 			discourage_invalid_data['state_batch_negative'] = state_batch_negative
 			discourage_invalid_data['action_batch_negative'] = action_batch_negative
-			#policy_nn.update(np.reshape(state_batch_negative, (-1, state_dim)), -0.05, action_batch_negative)
+			policy_nn.update(np.reshape(state_batch_negative, (-1, state_dim)), -0.05, action_batch_negative)
 
 		print('----- FINAL PATH -----')
 		print('\t'.join(env.path))
@@ -160,7 +160,7 @@ def REINFORCE(training_pairs, policy_nn, num_episodes, bfs_cache):
 			reward_data['state_batch'] = state_batch
 			reward_data['total_reward'] = total_reward
 			reward_data['action_batch'] = action_batch
-			#policy_nn.update(np.reshape(state_batch,(-1,state_dim)), total_reward, action_batch)
+			policy_nn.update(np.reshape(state_batch,(-1,state_dim)), total_reward, action_batch)
 		else:
 			global_reward = -0.05
 			# length_reward = 1/len(env.path)
@@ -172,15 +172,15 @@ def REINFORCE(training_pairs, policy_nn, num_episodes, bfs_cache):
 				if transition.reward == 0:
 					state_batch.append(transition.state)
 					action_batch.append(transition.action)
-			#policy_nn.update(np.reshape(state_batch, (-1,state_dim)), total_reward, action_batch)
+			policy_nn.update(np.reshape(state_batch, (-1,state_dim)), total_reward, action_batch)
 			reward_data['state_batch'] = state_batch
 			reward_data['total_reward'] = total_reward
 			reward_data['action_batch'] = action_batch
 
 			print('Failed, Do one teacher guideline')
 			try:
-				good_episodes = oracle.teacher(sample[0], sample[1], 1, env)
-				'''
+				# good_episodes = oracle.teacher(sample[0], sample[1], 1, env)
+
 				key = sample[0] + ':' + sample[1]
 				if key in bfs_cache:
 					print("CACHE HIT")
@@ -194,7 +194,6 @@ def REINFORCE(training_pairs, policy_nn, num_episodes, bfs_cache):
 					print("CACHE MISS")
 					misses += 1
 					good_episodes = oracle.teacher(sample[0], sample[1], 1, env)
-				'''
 
 				correction_updates = {}
 				correction_data = {}
@@ -211,12 +210,12 @@ def REINFORCE(training_pairs, policy_nn, num_episodes, bfs_cache):
 					correction_data['teacher_action_batch'] = teacher_action_batch
 					correction_updates[str(i)] = correction_data
 					i += 1
-					# policy_nn.update(np.squeeze(teacher_state_batch), 1, teacher_action_batch)
+					policy_nn.update(np.squeeze(teacher_state_batch), 1, teacher_action_batch)
 
 			except Exception as e:
 				print('Teacher guideline failed, exception {}'.format(e))
 
-			apply_vector_operations(discourage_invalid_data, reward_data, correction_updates, policy_nn)
+			# apply_vector_operations(discourage_invalid_data, reward_data, correction_updates, policy_nn)
 			env.clean_up()
 
 		print('Episode time: {}'.format(time.time() - start))
