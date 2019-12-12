@@ -67,10 +67,12 @@ def train():
         else:
             num_episodes = num_samples
 
+        episodes = num_samples * 3
+
         oracle = Oracle(graphpath)
         episode_good_episodes = {}
 
-        for episode in range(num_samples):
+        for episode in range(episodes):
             print("Episode %d" % episode)
             print('Training Sample:', train_data[episode % num_samples][:-1])
 
@@ -87,10 +89,6 @@ def train():
                 env.clean_up()
                 continue
 
-        for episode in range(num_samples):
-            good_episodes = episode_good_episodes.get(episode)
-            # print('episodes_good_episodes {}'.format(sys.getsizeof(episode_good_episodes)))
-            print('GPU Episode: {}'.format(episode))
             for item in good_episodes:
                 state_batch = []
                 action_batch = []
